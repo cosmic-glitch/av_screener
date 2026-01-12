@@ -37,7 +37,6 @@ def render_value_growth_panel(df: pd.DataFrame) -> None:
 
     # Calculate ranking metrics
     filtered_df["peg"] = filtered_df["pe_forward"] / (filtered_df["earnings_cagr_5yr"] * 100)
-    filtered_df["ey_plus_g"] = (1 / filtered_df["pe_forward"] * 100) + (filtered_df["earnings_cagr_5yr"] * 100)
 
     # Percentile combo rank (lower = better for both final ranks)
     filtered_df["pe_rank"] = filtered_df["pe_forward"].rank()
@@ -57,8 +56,8 @@ def render_value_growth_panel(df: pd.DataFrame) -> None:
         "Margin (%)": (filtered_df["profit_margin"] * 100).values,
         "Rev CAGR 5Y (%)": (filtered_df["revenue_cagr_5yr"] * 100).values,
         "EPS CAGR 5Y (%)": (filtered_df["earnings_cagr_5yr"] * 100).values,
+        "NTM EPS Gr (%)": (filtered_df["ntm_eps_growth"] * 100).values,
         "PEG": filtered_df["peg"].values,
-        "EY+G (%)": filtered_df["ey_plus_g"].values,
         "Rank": filtered_df["combo_rank"].values,
     })
 
@@ -80,8 +79,8 @@ def render_value_growth_panel(df: pd.DataFrame) -> None:
             "Margin (%)": st.column_config.NumberColumn(format="%.1f", width="small"),
             "Rev CAGR 5Y (%)": st.column_config.NumberColumn(format="%.1f", width="small"),
             "EPS CAGR 5Y (%)": st.column_config.NumberColumn(format="%.1f", width="small"),
+            "NTM EPS Gr (%)": st.column_config.NumberColumn(format="%.1f", width="small"),
             "PEG": st.column_config.NumberColumn(format="%.2f", width="small"),
-            "EY+G (%)": st.column_config.NumberColumn(format="%.1f", width="small"),
             "Rank": st.column_config.NumberColumn(format="%.1f", width="small"),
         }
     )

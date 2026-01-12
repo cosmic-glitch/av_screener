@@ -18,6 +18,7 @@ class StockMetrics:
     earnings_cagr_5yr: Optional[float] = None
     no_loss_5yr: Optional[bool] = None  # True if no annual loss in last 5 years
     price: Optional[float] = None
+    ntm_eps_growth: Optional[float] = None  # NTM EPS growth rate (YoY from analyst estimates)
     extraction_date: str = ""
 
     def __post_init__(self):
@@ -38,6 +39,7 @@ class StockMetrics:
             "earnings_cagr_5yr": self.earnings_cagr_5yr,
             "no_loss_5yr": self.no_loss_5yr,
             "price": self.price,
+            "ntm_eps_growth": self.ntm_eps_growth,
             "extraction_date": self.extraction_date,
         }
 
@@ -131,5 +133,12 @@ def extract_metrics(
             future_estimates.sort(key=lambda x: x[0])
             _, fwd_eps = future_estimates[0]
             metrics.pe_forward = metrics.price / fwd_eps
+
+            # Calculate NTM EPS growth (year-over-year growth from analyst estimates)
+            if len(future_estimates) >= 2:
+                _, eps_year1 = future_estimates[0]
+                _, eps_year2 = future_estimates[1]
+                if eps_year1 > 0:
+                    metrics.ntm_eps_growth = (eps_year2 / eps_year1) - 1
 
     return metrics
