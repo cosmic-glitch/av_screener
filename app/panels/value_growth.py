@@ -2,20 +2,22 @@
 
 import streamlit as st
 import pandas as pd
+import numpy as np
 
 # Filter thresholds
-REV_CAGR_MIN = 0.08      # 8% revenue growth
-EARN_CAGR_MIN = 0.08     # 8% earnings growth
+REV_CAGR_MIN = 0.10      # 10% revenue growth
+EARN_CAGR_MIN = 0.10     # 10% earnings growth
 MARGIN_MIN = 0.20        # 20% profit margin
 MKT_CAP_MIN = 100e9      # $100B market cap
-TOP_N = 20               # Show top 20
+NTM_EPS_GROWTH_MIN = 0.10  # 10% NTM EPS growth
+PEG_THRESHOLD = 1.0      # Highlight rows with PEG < 1
 
 
 def render_value_growth_panel(df: pd.DataFrame) -> None:
     """Render panel showing lowest forward P/E stocks with strong growth and margins."""
 
     st.subheader("Potentially undervalued considering their growth rates")
-    st.caption("Filters: Mkt Cap > $100B, Rev CAGR > 8%, EPS CAGR > 8%, Margin > 20%, No loss in 5 yrs | Sorted by Fwd P/E")
+    st.caption("Filters: Mkt Cap > $100B, Rev CAGR > 10%, EPS CAGR > 10%, Margin > 20%, No loss in 5 yrs, NTM EPS Gr > 10% | Sorted by PEG | Green = PEG < 1")
 
     # Filter criteria
     filtered_df = df[
@@ -25,18 +27,22 @@ def render_value_growth_panel(df: pd.DataFrame) -> None:
         (df["revenue_cagr_5yr"] > REV_CAGR_MIN) &
         (df["earnings_cagr_5yr"] > EARN_CAGR_MIN) &
         (df["profit_margin"] > MARGIN_MIN) &
-        (df["no_loss_5yr"] == True)
+        (df["no_loss_5yr"] == True) &
+        (df["ntm_eps_growth"] > NTM_EPS_GROWTH_MIN)
     ].copy()
 
     if filtered_df.empty:
         st.warning("No stocks with valid data.")
         return
 
-    # Sort by forward P/E
-    filtered_df = filtered_df.sort_values("pe_forward", ascending=True).reset_index(drop=True)
-
-    # Calculate ranking metrics
+    # Calculate PEG ratio
     filtered_df["peg"] = filtered_df["pe_forward"] / (filtered_df["earnings_cagr_5yr"] * 100)
+
+    # Sort by PEG ratio
+    filtered_df = filtered_df.sort_values("peg", ascending=True).reset_index(drop=True)
+
+    # Store PEG values for styling
+    peg_values = filtered_df["peg"].values
 
     # Percentile combo rank (lower = better for both final ranks)
     filtered_df["pe_rank"] = filtered_df["pe_forward"].rank()
@@ -64,8 +70,27 @@ def render_value_growth_panel(df: pd.DataFrame) -> None:
     # Calculate height to show all rows without scrolling (35px per row + header + padding)
     table_height = (total + 1) * 35 + 10
 
+    # Style rows with gradient green (darker = lower PEG = better)
+    highlighted_peg = peg_values[peg_values < PEG_THRESHOLD]
+    min_peg = float(np.min(highlighted_peg)) if len(highlighted_peg) > 0 else 0
+
+    def style_row(row):
+        idx = row.name
+        peg = peg_values[idx] if idx < len(peg_values) else None
+        if pd.notna(peg) and peg < PEG_THRESHOLD:
+            # Normalize: 0 = best (darkest), 1 = threshold (lightest)
+            intensity = (peg - min_peg) / (PEG_THRESHOLD - min_peg) if PEG_THRESHOLD > min_peg else 0
+            # Green gradient from #166534 (dark) to #86efac (light)
+            r = int(22 + intensity * (134 - 22))
+            g = int(101 + intensity * (239 - 101))
+            b = int(52 + intensity * (172 - 52))
+            return [f"background-color: rgb({r},{g},{b}); color: white"] * len(row)
+        return [""] * len(row)
+
+    styled_df = display_df.style.apply(style_row, axis=1)
+
     st.dataframe(
-        display_df,
+        styled_df,
         hide_index=True,
         use_container_width=True,
         height=table_height,

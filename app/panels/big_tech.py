@@ -2,6 +2,7 @@
 
 import streamlit as st
 import pandas as pd
+import numpy as np
 
 # Big Tech stock tickers (excluding Tesla)
 BIG_TECH_TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA"]
@@ -46,12 +47,21 @@ def render_big_tech_panel(df: pd.DataFrame) -> None:
         "EPS CAGR 5Y": tech_df["earnings_cagr_5yr"].apply(lambda x: f"{x*100:.1f}%" if pd.notna(x) else "N/A").values,
     })
 
-    # Style rows green if forward P/E < threshold
+    # Style rows with gradient green (darker = lower P/E = better)
+    highlighted_pe = pe_values[pe_values < FWD_PE_THRESHOLD]
+    min_pe = float(np.min(highlighted_pe)) if len(highlighted_pe) > 0 else 0
+
     def style_row(row):
         idx = row.name
         pe = pe_values[idx] if idx < len(pe_values) else None
         if pd.notna(pe) and pe < FWD_PE_THRESHOLD:
-            return ["background-color: #22c55e; color: white"] * len(row)
+            # Normalize: 0 = best (darkest), 1 = threshold (lightest)
+            intensity = (pe - min_pe) / (FWD_PE_THRESHOLD - min_pe) if FWD_PE_THRESHOLD > min_pe else 0
+            # Green gradient from #166534 (dark) to #86efac (light)
+            r = int(22 + intensity * (134 - 22))
+            g = int(101 + intensity * (239 - 101))
+            b = int(52 + intensity * (172 - 52))
+            return [f"background-color: rgb({r},{g},{b}); color: white"] * len(row)
         return [""] * len(row)
 
     styled_df = display_df.style.apply(style_row, axis=1)
