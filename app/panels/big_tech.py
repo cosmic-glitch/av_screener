@@ -14,6 +14,7 @@ def render_big_tech_panel(df: pd.DataFrame) -> None:
     """Render the Big Tech panel showing stocks ranked by forward P/E."""
 
     st.subheader("Best of Big Tech right now")
+    st.caption("Sorted by Forward P/E | Green rows = Fwd P/E < 25")
 
     # Filter to Big Tech only
     tech_df = df[df["symbol"].isin(BIG_TECH_TICKERS)].copy()
@@ -74,6 +75,3 @@ def render_big_tech_panel(df: pd.DataFrame) -> None:
             "EPS CAGR 5Y": st.column_config.TextColumn(width="small"),
         }
     )
-
-    # Add context below the table
-    st.caption("Sorted by Forward P/E | Green rows = Fwd P/E < 25")

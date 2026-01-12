@@ -15,6 +15,7 @@ def render_value_growth_panel(df: pd.DataFrame) -> None:
     """Render panel showing lowest forward P/E stocks with strong growth and margins."""
 
     st.subheader("Potentially undervalued considering their growth rates")
+    st.caption("Filters: Mkt Cap > $100B, Rev CAGR > 8%, EPS CAGR > 8%, Margin > 20%, No loss in 5 yrs | Sorted by Fwd P/E")
 
     # Filter criteria
     filtered_df = df[
@@ -84,5 +85,3 @@ def render_value_growth_panel(df: pd.DataFrame) -> None:
             "Rank": st.column_config.NumberColumn(format="%.1f", width="small"),
         }
     )
-
-    st.caption(f"Showing {total} stocks | Filters: Mkt Cap > $100B, Rev CAGR > 8%, EPS CAGR > 8%, Margin > 20%, No loss in 5 yrs | Sorted by Fwd P/E")
