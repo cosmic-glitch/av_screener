@@ -17,6 +17,23 @@ st.set_page_config(
     layout="wide",
 )
 
+# Compact layout CSS
+st.markdown("""
+<style>
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 0rem;
+    }
+    h1, h3 {
+        margin: 0;
+        padding: 0;
+    }
+    [data-testid="stVerticalBlock"] {
+        gap: 0.25rem;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # Title
 st.title("AV Screener")
 
@@ -29,13 +46,8 @@ except FileNotFoundError as e:
     st.error(f"Data not found: {e}")
     st.stop()
 
-# Divider
-st.divider()
-
 # Section 1: Big Tech
 render_big_tech_panel(df)
-
-st.divider()
 
 # Section 2: Value + Growth
 render_value_growth_panel(df)
