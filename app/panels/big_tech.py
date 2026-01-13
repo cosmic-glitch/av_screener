@@ -14,7 +14,7 @@ FWD_PE_THRESHOLD = 25
 def render_big_tech_panel(df: pd.DataFrame) -> None:
     """Render the Big Tech panel showing stocks ranked by forward P/E."""
 
-    st.subheader("Best of Big Tech right now")
+    st.subheader("Big Tech firms at a good valuation")
     st.caption("Sorted by Forward P/E | Green rows = Fwd P/E < 25")
 
     # Filter to Big Tech only
