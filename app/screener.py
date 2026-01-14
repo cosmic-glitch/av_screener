@@ -8,6 +8,7 @@ import streamlit as st
 from data_loader import load_latest_metrics, get_extraction_date
 from panels.big_tech import render_big_tech_panel
 from panels.value_growth import render_value_growth_panel
+from panels.growth_discount import render_growth_discount_panel
 
 
 # Page configuration
@@ -51,3 +52,6 @@ render_big_tech_panel(df)
 
 # Section 2: Value + Growth
 render_value_growth_panel(df)
+
+# Section 3: Growth at a Discount
+render_growth_discount_panel(df)
