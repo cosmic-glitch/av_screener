@@ -6,6 +6,9 @@ on:
     - cron: '45 17 * * *'
   workflow_dispatch:  # Allow manual trigger
 
+permissions:
+  contents: write
+
 jobs:
   extract:
     runs-on: ubuntu-latest
