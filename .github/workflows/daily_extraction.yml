@@ -1,0 +1,38 @@
+name: Daily S&P 500 Extraction
+
+on:
+  schedule:
+    # Run daily at 9:45 AM PST (17:45 UTC)
+    - cron: '45 17 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run extraction
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: python src/extract_sp500.py
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/
+          git diff --staged --quiet || git commit -m "Daily S&P 500 metrics update $(date +%Y-%m-%d)"
+          git push

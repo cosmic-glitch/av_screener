@@ -15,7 +15,7 @@ def render_big_tech_panel(df: pd.DataFrame) -> None:
     """Render the Big Tech panel showing stocks ranked by forward P/E."""
 
     st.subheader("Big Tech firms at a good valuation")
-    st.caption("Sorted by Forward P/E | Green rows = Fwd P/E < 25")
+    st.caption("Filters: AAPL, MSFT, GOOGL, AMZN, META, NVDA  \nSorted by Forward P/E | Green = Fwd P/E < 25")
 
     # Filter to Big Tech only
     tech_df = df[df["symbol"].isin(BIG_TECH_TICKERS)].copy()

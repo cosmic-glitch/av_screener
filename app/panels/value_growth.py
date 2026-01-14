@@ -17,7 +17,7 @@ def render_value_growth_panel(df: pd.DataFrame) -> None:
     """Render panel showing lowest forward P/E stocks with strong growth and margins."""
 
     st.subheader("High growth firms that are reasonably valued")
-    st.caption("Filters: Mkt Cap > $100B, Rev CAGR > 10%, EPS CAGR > 10%, Margin > 20%, No loss in 5 yrs, NTM EPS Gr > 10% | Sorted by PEG | Green = PEG < 1")
+    st.caption("Filters: Mkt Cap > $100B, Rev CAGR > 10%, EPS CAGR > 10%, Margin > 20%, No loss in 5 yrs, NTM EPS Gr > 10%  \nPEG = Fwd P/E / NTM EPS Growth  \nSorted by PEG | Green = PEG < 1")
 
     # Filter criteria
     filtered_df = df[
@@ -36,7 +36,7 @@ def render_value_growth_panel(df: pd.DataFrame) -> None:
         return
 
     # Calculate PEG ratio
-    filtered_df["peg"] = filtered_df["pe_forward"] / (filtered_df["earnings_cagr_5yr"] * 100)
+    filtered_df["peg"] = filtered_df["pe_forward"] / (filtered_df["ntm_eps_growth"] * 100)
 
     # Sort by PEG ratio
     filtered_df = filtered_df.sort_values("peg", ascending=True).reset_index(drop=True)
