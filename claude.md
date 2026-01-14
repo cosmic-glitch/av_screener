@@ -14,9 +14,9 @@ S&P 500 stock screener that identifies potentially undervalued stocks based on f
 - Auto-deploys from `main` branch on push
 - Main file: `app/screener.py`
 
-### GitHub Actions (Weekly Extraction)
-- **Workflow:** `.github/workflows/weekly_extraction.yml`
-- **Schedule:** Sundays at 6 AM UTC
+### GitHub Actions (Daily Extraction)
+- **Workflow:** `.github/workflows/daily_extraction.yml`
+- **Schedule:** Daily at 6 AM UTC
 - **Secret required:** `FMP_API_KEY` (repository secret)
 - Extracts S&P 500 metrics from FMP API and commits updated CSV
 
@@ -39,7 +39,7 @@ av_screener/
 ├── data/
 │   └── sp500_metrics_*.csv  # Extracted metrics (date-stamped)
 └── .github/workflows/
-    └── weekly_extraction.yml
+    └── daily_extraction.yml
 ```
 
 ## Key Metrics
@@ -48,7 +48,7 @@ av_screener/
 - **EPS CAGR 5Y:** 5-year compound annual growth rate of EPS
 - **Revenue CAGR 5Y:** 5-year compound annual growth rate of revenue
 - **Profit Margin:** Net income / Revenue (TTM)
-- **PEG:** Forward P/E / EPS CAGR
+- **PEG:** Forward P/E / NTM EPS Growth
 - **EY+G:** Earnings Yield (1/PE) + EPS Growth Rate
 - **no_loss_5yr:** True if no annual net income loss in last 5 years
 
