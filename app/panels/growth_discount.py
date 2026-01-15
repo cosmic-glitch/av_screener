@@ -14,7 +14,7 @@ FWD_PE_HIGHLIGHT = 20        # Highlight rows with Fwd P/E < 20
 def render_growth_discount_panel(df: pd.DataFrame) -> None:
     """Render panel showing high growth stocks at low valuations."""
 
-    st.subheader("High growth firms at a discount")
+    st.subheader("Accelerating growth at a low P/E")
     st.caption("Filters: Mkt Cap > $100B, Fwd P/E < 25, NTM EPS Gr > 20%  \nSorted by Fwd P/E | Green = Fwd P/E < 20")
 
     # Filter criteria

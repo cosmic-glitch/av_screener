@@ -16,7 +16,7 @@ PEG_THRESHOLD = 1.0      # Highlight rows with PEG < 1
 def render_value_growth_panel(df: pd.DataFrame) -> None:
     """Render panel showing lowest forward P/E stocks with strong growth and margins."""
 
-    st.subheader("High growth firms that are reasonably valued")
+    st.subheader("Quality compounders at a reasonable price")
     st.caption("Filters: Mkt Cap > $100B, Rev CAGR > 10%, EPS CAGR > 10%, Margin > 20%, No loss in 5 yrs, NTM EPS Gr > 10%  \nPEG = Fwd P/E / NTM EPS Growth  \nSorted by PEG | Green = PEG < 1")
 
     # Filter criteria
